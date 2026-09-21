@@ -1,5 +1,6 @@
-pandas
+﻿pandas
 numpy
 scikit-learn
 openpyxl
 pyarrow
+matplotlib
