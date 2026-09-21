@@ -1,0 +1,7 @@
+Stage,Rows Before,Rows Removed,Rows After,Rule
+Bronze,1067371,0,1067371,Raw data loaded from both UCI workbook sheets
+Silver 1,1067371,34335,1033036,Remove exact duplicate transaction rows
+Silver 2,1033036,19104,1013932,Remove cancellation invoices from purchase modeling
+Silver 3,1013932,3393,1010539,Keep completed purchases with positive quantity
+Silver 4,1010539,2626,1007913,Remove invalid or zero-price purchase records
+Silver 5,1007913,0,1007913,Keep transactions with valid timestamps
