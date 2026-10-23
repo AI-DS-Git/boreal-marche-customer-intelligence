@@ -14,8 +14,7 @@ signal is shown.
 import json
 import math
 import urllib.request
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
 import numpy as np

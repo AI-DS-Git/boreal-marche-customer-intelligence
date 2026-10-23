@@ -170,7 +170,7 @@ def predict_batch(body: BatchPredictRequest, request: Request):
     per_item = ms / len(body.items)
     rid = request.state.request_id
     out = []
-    for i, (f, p) in enumerate(zip(body.items, probs)):
+    for i, (f, p) in enumerate(zip(body.items, probs, strict=True)):
         r = _to_response(f"{rid}-{i}", st.model, f, p, per_item)
         st.store.log_prediction(r.request_id, "/predict/batch", st.model.model_version, st.settings.git_sha,
                                 json.loads(f.model_dump_json()), float(p), r.decision, per_item)

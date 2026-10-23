@@ -10,14 +10,12 @@ multiplies spend/frequency and ages the customers, which should turn the dashboa
 Standard library only, so it runs anywhere.
 """
 import argparse
-import csv
 import json
 import random
 import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent

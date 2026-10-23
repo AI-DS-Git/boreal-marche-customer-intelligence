@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from app.schemas import CustomerFeatures
 from tests.helpers import golden, golden_features, model
@@ -35,9 +36,9 @@ def test_batch_matches_single():
 
 def test_schema_rejects_unknown_and_inconsistent_fields():
     f = golden()["features"]
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         CustomerFeatures(**{**f, "surprise": 1})
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         CustomerFeatures(**{**f, "first_purchase_date": "2011-12-01", "last_purchase_date": "2010-01-01"})
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         CustomerFeatures(**{**f, "weekend_transaction_ratio": 1.5})

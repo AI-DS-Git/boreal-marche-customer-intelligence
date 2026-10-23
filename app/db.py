@@ -62,7 +62,6 @@ class LogStore:
             import psycopg  # installed in the container image; not needed for SQLite use
 
             self._conn = psycopg.connect(url, autocommit=True)
-            auto = "GENERATED ALWAYS AS IDENTITY"
             schema = [s.replace("INTEGER PRIMARY KEY {auto}", "INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY") for s in SCHEMA]
         else:
             path = url.replace("sqlite:///", "", 1)
@@ -93,7 +92,7 @@ class LogStore:
                 with self._conn.cursor() as cur:
                     cur.execute(self._q(sql), params)
                     cols = [d.name for d in cur.description]
-                    return [dict(zip(cols, r)) for r in cur.fetchall()]
+                    return [dict(zip(cols, r, strict=True)) for r in cur.fetchall()]
             return [dict(r) for r in self._conn.execute(sql, params).fetchall()]
 
     def ping(self) -> bool:
