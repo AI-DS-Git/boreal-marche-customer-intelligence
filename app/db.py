@@ -58,6 +58,7 @@ class LogStore:
         self.url = url
         self.is_pg = url.startswith("postgres")
         self._lock = threading.Lock()
+        self._conn: Any  # psycopg or sqlite3 connection, depending on the URL
         if self.is_pg:
             import psycopg  # installed in the container image; not needed for SQLite use
 
@@ -91,7 +92,7 @@ class LogStore:
             if self.is_pg:
                 with self._conn.cursor() as cur:
                     cur.execute(self._q(sql), params)
-                    cols = [d.name for d in cur.description]
+                    cols = [d.name for d in (cur.description or [])]
                     return [dict(zip(cols, r, strict=True)) for r in cur.fetchall()]
             return [dict(r) for r in self._conn.execute(sql, params).fetchall()]
 

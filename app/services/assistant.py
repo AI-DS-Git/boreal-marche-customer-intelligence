@@ -17,7 +17,7 @@ import unicodedata
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 PRODUCT_CODE = re.compile(r"\b(\d{5}[A-Za-z]{0,2})\b")
 
@@ -161,7 +161,7 @@ class PolicyIndex:
         if not q:
             return []
         total = sum(self._idf.get(t, self._unknown_idf) for t in q)
-        scored = []
+        scored: List[Dict[str, Any]] = []
         for p in self.policies:
             pid = p["id"]
             got = 0.0

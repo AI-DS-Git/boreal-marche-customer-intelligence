@@ -66,7 +66,7 @@ def numeric_reference(values: pd.Series, bins: int = 10) -> Dict[str, Any]:
 
 
 def build_reference(features: pd.DataFrame, probabilities: np.ndarray) -> Dict[str, Any]:
-    ref = {"n": int(len(features)), "features": {}, "prediction": numeric_reference(pd.Series(probabilities))}
+    ref: Dict[str, Any] = {"n": int(len(features)), "features": {}, "prediction": numeric_reference(pd.Series(probabilities))}
     for col in features.columns:
         if pd.api.types.is_numeric_dtype(features[col]):
             ref["features"][col] = numeric_reference(features[col])
