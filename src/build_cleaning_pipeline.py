@@ -1,6 +1,7 @@
 import pandas as pd
+from pathlib import Path
 
-file = r"data\raw\online_retail_II.xlsx"
+file = Path("data") / "raw" / "online_retail_II.xlsx"
 
 df1 = pd.read_excel(file, sheet_name="Year 2009-2010")
 df2 = pd.read_excel(file, sheet_name="Year 2010-2011")

@@ -1,0 +1,11 @@
+model,segment_type,segment_value,n,accuracy,recall_positive_class
+Extra Trees,is_uk,False,85,0.5529411764705883,0.5
+Extra Trees,is_uk,True,703,0.6088193456614509,0.5420560747663551
+Extra Trees,spend_tercile,low,263,0.4144486692015209,0.01910828025477707
+Extra Trees,spend_tercile,mid,262,0.5725190839694656,0.5346534653465347
+Extra Trees,spend_tercile,high,263,0.8212927756653993,0.8791666666666667
+Random Forest,is_uk,False,85,0.6823529411764706,0.734375
+Random Forest,is_uk,True,703,0.7297297297297297,0.8186915887850468
+Random Forest,spend_tercile,low,263,0.5247148288973384,0.3630573248407643
+Random Forest,spend_tercile,mid,262,0.7595419847328244,0.9603960396039604
+Random Forest,spend_tercile,high,263,0.8897338403041825,0.975

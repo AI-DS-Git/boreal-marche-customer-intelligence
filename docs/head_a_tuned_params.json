@@ -1,0 +1,22 @@
+{
+  "Extra Trees": {
+    "best_params": {
+      "n_estimators": 450,
+      "max_depth": 15,
+      "min_samples_leaf": 27,
+      "min_samples_split": 30,
+      "max_features": null
+    },
+    "best_mean_pr_auc": 0.8346648321022517
+  },
+  "Random Forest": {
+    "best_params": {
+      "n_estimators": 500,
+      "max_depth": 3,
+      "min_samples_leaf": 17,
+      "min_samples_split": 3,
+      "max_features": null
+    },
+    "best_mean_pr_auc": 0.8333358999192653
+  }
+}

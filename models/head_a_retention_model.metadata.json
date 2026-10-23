@@ -1,0 +1,92 @@
+{
+  "model_version": "v0.3-d3",
+  "training_timestamp_utc": "2026-09-29T23:25:23.964658+00:00",
+  "row_counts": {
+    "train": 3674,
+    "calibration": 787,
+    "held_out_test": 788
+  },
+  "feature_names_in_order": [
+    "recency_days",
+    "frequency_orders",
+    "monetary_total",
+    "monetary_mean_order",
+    "average_quantity",
+    "total_quantity",
+    "unique_products",
+    "unique_product_descriptions",
+    "average_unit_price",
+    "country",
+    "active_days",
+    "active_months",
+    "weekend_transactions",
+    "transaction_count",
+    "price_std",
+    "holiday_transactions",
+    "avg_days_between_orders",
+    "customer_lifetime_days",
+    "orders_per_active_month",
+    "products_per_order",
+    "revenue_per_order",
+    "quantity_per_order",
+    "weekend_transaction_ratio",
+    "avg_lines_per_order",
+    "holiday_season_ratio",
+    "is_uk",
+    "first_purchase_date_days",
+    "last_purchase_date_days"
+  ],
+  "categorical_features": [
+    "country"
+  ],
+  "numeric_features": [
+    "recency_days",
+    "frequency_orders",
+    "monetary_total",
+    "monetary_mean_order",
+    "average_quantity",
+    "total_quantity",
+    "unique_products",
+    "unique_product_descriptions",
+    "average_unit_price",
+    "active_days",
+    "active_months",
+    "weekend_transactions",
+    "transaction_count",
+    "price_std",
+    "holiday_transactions",
+    "avg_days_between_orders",
+    "customer_lifetime_days",
+    "orders_per_active_month",
+    "products_per_order",
+    "revenue_per_order",
+    "quantity_per_order",
+    "weekend_transaction_ratio",
+    "avg_lines_per_order",
+    "holiday_season_ratio",
+    "is_uk",
+    "first_purchase_date_days",
+    "last_purchase_date_days"
+  ],
+  "library_versions": {
+    "python": "3.11.15",
+    "scikit-learn": "1.8.0",
+    "pandas": "3.0.2",
+    "numpy": "2.4.4",
+    "joblib": "1.5.3"
+  },
+  "git_commit": "9805a8bcbfca0ad54445bd05ae1592de1a9708a1",
+  "decision_threshold": 0.8,
+  "decision_rule": "target (send retention offer) if predict_proba(retain)[1] < threshold",
+  "held_out_test_metric": {
+    "roc_auc": 0.7047460052468401,
+    "pr_auc": 0.8616035942124635,
+    "metric_primary": "pr_auc"
+  },
+  "serialization": "joblib (pipeline + estimator + calibrator bundled as ONE artifact)",
+  "known_risks": [
+    "joblib uses pickle internally: loading this file executes arbitrary code if the file has been tampered with. Only load artifacts from the trusted model registry, never from an untrusted upload.",
+    "The artifact is tied to the exact scikit-learn version above; a version mismatch between training and serving environments can silently change behavior or fail to load. The Dockerfile must pin scikit-learn to this version.",
+    "Preprocessing (imputer/scaler/one-hot) is embedded inside this single artifact specifically so the API can never accidentally apply mismatched preprocessing logic written separately in serving code."
+  ]
+}

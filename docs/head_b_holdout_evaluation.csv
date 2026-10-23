@@ -1,0 +1,3 @@
+strategy,hit_rate_at_5,hits,n_customers,catalog_coverage,products_recommended,catalog_size
+Rule engine,0.4042838018741633,906,2241,0.031483578708946774,139,4415
+Popularity baseline,0.3119143239625167,699,2241,0.0031710079275198188,14,4415

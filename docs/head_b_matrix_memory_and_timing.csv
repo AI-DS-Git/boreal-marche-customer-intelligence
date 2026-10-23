@@ -1,0 +1,2 @@
+n_baskets,n_items,density,sparse_bytes,dense_bytes_theoretical,apriori_time_sec,fpgrowth_time_sec,cross_validated_identical
+29850,4415,0.004575470785410632,3134359,131787750,6.9976201329998275,5.028045710000015,True

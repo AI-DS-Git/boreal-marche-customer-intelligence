@@ -2,7 +2,7 @@
 import numpy as np
 from pathlib import Path
 
-FILE = r"data\raw\online_retail_II.xlsx"
+FILE = Path("data") / "raw" / "online_retail_II.xlsx"
 CUTOFF = pd.Timestamp("2011-08-31 23:59:59")
 
 # Load both UCI sheets
@@ -86,8 +86,30 @@ features = df.groupby("Customer ID").agg(
                            lambda x: (x.dt.dayofweek >= 5).sum()),
 
     transaction_count=("Invoice",
-                       "count")
+                       "count"),
+
+    price_std=("Price",
+               "std"),
+
+    holiday_transactions=("InvoiceDate",
+                          lambda x: x.dt.month.isin([11, 12]).sum())
 )
+
+# Mean gap (days) between a customer's distinct order dates. Requires the
+# per-customer date sequence rather than a single-column aggregate, so it is
+# computed separately and joined back in.
+def _mean_order_gap(dates):
+    ordered = pd.Series(sorted(dates.unique()))
+    if len(ordered) < 2:
+        return np.nan
+    return ordered.diff().dt.days.dropna().mean()
+
+avg_days_between_orders = (
+    df.groupby("Customer ID")["InvoiceDate"]
+      .apply(_mean_order_gap)
+      .rename("avg_days_between_orders")
+)
+features = features.join(avg_days_between_orders)
 
 # Additional derived features
 features["customer_lifetime_days"] = (
@@ -119,6 +141,20 @@ features["weekend_transaction_ratio"] = (
     features["weekend_transactions"] /
     features["transaction_count"].replace(0, np.nan)
 )
+
+features["avg_lines_per_order"] = (
+    features["transaction_count"] /
+    features["frequency_orders"].replace(0, np.nan)
+)
+
+features["holiday_season_ratio"] = (
+    features["holiday_transactions"] /
+    features["transaction_count"].replace(0, np.nan)
+)
+
+features["is_uk"] = (
+    features["country"] == "United Kingdom"
+).astype(int)
 
 # Replace infinite values
 features = features.replace([np.inf, -np.inf], np.nan)

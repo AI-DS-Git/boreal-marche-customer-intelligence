@@ -1,0 +1,3 @@
+variant,roc_auc,pr_auc,n_features
+"CLEAN (current pipeline, pre-cutoff only)",0.6807462939273083,0.8569241058969603,28
+LEAKY (label-window aggregates injected),1.0,1.0,30
