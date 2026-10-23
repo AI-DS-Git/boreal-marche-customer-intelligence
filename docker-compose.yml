@@ -1,0 +1,50 @@
+# One command brings up the whole system:   docker compose up --build
+# API http://localhost:8000/docs   UI http://localhost:8501
+# Optional local LLM (Head C, later):       docker compose --profile llm up --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: boreal
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-boreal_dev_only}
+      POSTGRES_DB: boreal
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U boreal -d boreal"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args: { GIT_SHA: "${GIT_SHA:-local}" }
+    environment:
+      DATABASE_URL: postgresql://boreal:${POSTGRES_PASSWORD:-boreal_dev_only}@db:5432/boreal
+      ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OLLAMA_URL: http://ollama:11434
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["8000:8000"]
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      api: { condition: service_healthy }
+    ports: ["8501:8501"]
+
+  ollama:            # local LLM provider for Head C; not started unless --profile llm
+    image: ollama/ollama:latest
+    profiles: [llm]
+    volumes: [ollama:/root/.ollama]
+    ports: ["11434:11434"]
+
+volumes:
+  pgdata:
+  ollama:

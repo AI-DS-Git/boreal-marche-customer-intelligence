@@ -1,6 +1,6 @@
 {
   "model_version": "v0.3-d3",
-  "training_timestamp_utc": "2026-09-29T23:25:23.964658+00:00",
+  "training_timestamp_utc": "2026-10-02T12:20:37.106062+00:00",
   "row_counts": {
     "train": 3674,
     "calibration": 787,
@@ -76,11 +76,11 @@
     "joblib": "1.5.3"
   },
   "git_commit": "9805a8bcbfca0ad54445bd05ae1592de1a9708a1",
-  "decision_threshold": 0.8,
+  "decision_threshold": 0.82,
   "decision_rule": "target (send retention offer) if predict_proba(retain)[1] < threshold",
   "held_out_test_metric": {
-    "roc_auc": 0.7047460052468401,
-    "pr_auc": 0.8616035942124635,
+    "roc_auc": 0.7301410640308803,
+    "pr_auc": 0.8753494194366198,
     "metric_primary": "pr_auc"
   },
   "serialization": "joblib (pipeline + estimator + calibrator bundled as ONE artifact)",

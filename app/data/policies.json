@@ -1,0 +1,66 @@
+[
+ {
+  "id": "returns",
+  "title_en": "Returns and refunds",
+  "title_fr": "Retours et remboursements",
+  "text_en": "Items can be returned within 30 days of delivery if unused and in original packaging. Refunds are issued to the original payment method within 7 business days of receiving the return. Sale items are exchange-only.",
+  "text_fr": "Les articles peuvent être retournés dans les 30 jours suivant la livraison s'ils sont inutilisés et dans leur emballage d'origine. Les remboursements sont versés sur le mode de paiement initial dans les 7 jours ouvrables suivant la réception du retour. Les articles en solde ne sont qu'échangeables.",
+  "source": "Boréal Marché prototype policy (project-written, not a real retailer's policy)"
+ },
+ {
+  "id": "shipping",
+  "title_en": "Shipping and delivery",
+  "title_fr": "Livraison et expédition",
+  "text_en": "Orders ship within 2 business days. Standard delivery in Canada takes 3 to 7 business days. Orders above 75 CAD ship free. Tracking numbers are emailed once the parcel leaves the warehouse.",
+  "text_fr": "Les commandes sont expédiées dans les 2 jours ouvrables. La livraison standard au Canada prend de 3 à 7 jours ouvrables. Les commandes de plus de 75 CAD sont livrées gratuitement. Le numéro de suivi est envoyé par courriel dès que le colis quitte l'entrepôt.",
+  "source": "Boréal Marché prototype policy (project-written, not a real retailer's policy)"
+ },
+ {
+  "id": "loyalty_coupons",
+  "title_en": "Loyalty coupons",
+  "title_fr": "Coupons de fidélité",
+  "text_en": "Loyal customers may receive a personal coupon worth 5 CAD. Each coupon is valid for 30 days, is single use and cannot be combined with other offers or exchanged for cash.",
+  "text_fr": "Les clients fidèles peuvent recevoir un coupon personnel de 5 CAD. Chaque coupon est valable 30 jours, à usage unique, ne peut pas être combiné à d'autres offres ni échangé contre de l'argent.",
+  "source": "Boréal Marché prototype policy (project-written, not a real retailer's policy)"
+ },
+ {
+  "id": "retention_offers",
+  "title_en": "Retention offers and human review",
+  "title_fr": "Offres de rétention et révision humaine",
+  "text_en": "A retention offer is only sent after a staff member has reviewed the recommendation. The model supports the decision but never makes it alone. Customers can ask a staff member to review any automated decision about them and can present their observations.",
+  "text_fr": "Une offre de rétention n'est envoyée qu'après la révision de la recommandation par un membre du personnel. Le modèle appuie la décision mais ne la prend jamais seul. Les clients peuvent demander à un membre du personnel de réviser toute décision automatisée les concernant et présenter leurs observations.",
+  "source": "Boréal Marché prototype policy (project-written, not a real retailer's policy)"
+ },
+ {
+  "id": "privacy",
+  "title_en": "Privacy notice",
+  "title_fr": "Avis de confidentialité",
+  "text_en": "We use purchase history to suggest products and to estimate whether a customer may stop buying. We collect only what is needed, limit staff access, and never sell personal information. This prototype uses a public dataset and no real customer records.",
+  "text_fr": "Nous utilisons l'historique d'achats pour suggérer des produits et estimer si un client risque de cesser d'acheter. Nous ne collectons que le nécessaire, limitons l'accès du personnel et ne vendons jamais de renseignements personnels. Ce prototype utilise un jeu de données public et aucun dossier client réel.",
+  "source": "Boréal Marché prototype policy (project-written, not a real retailer's policy)"
+ },
+ {
+  "id": "data_retention",
+  "title_en": "Data retention and deletion",
+  "title_fr": "Conservation et suppression des données",
+  "text_en": "Order data is kept for 3 years for accounting. Customers can ask for access to or deletion of their personal information by contacting the privacy officer. Requests are answered within 30 days.",
+  "text_fr": "Les données de commande sont conservées 3 ans à des fins comptables. Les clients peuvent demander l'accès à leurs renseignements personnels ou leur suppression en communiquant avec le responsable de la protection des renseignements personnels. Les demandes reçoivent une réponse dans les 30 jours.",
+  "source": "Boréal Marché prototype policy (project-written, not a real retailer's policy)"
+ },
+ {
+  "id": "price_adjustment",
+  "title_en": "Price adjustment",
+  "title_fr": "Ajustement de prix",
+  "text_en": "If an item you bought drops in price within 14 days, contact customer service with your order number and we will refund the difference once per order.",
+  "text_fr": "Si le prix d'un article que vous avez acheté baisse dans les 14 jours, communiquez avec le service à la clientèle avec votre numéro de commande et nous rembourserons la différence une fois par commande.",
+  "source": "Boréal Marché prototype policy (project-written, not a real retailer's policy)"
+ },
+ {
+  "id": "contact_human",
+  "title_en": "Contacting a person",
+  "title_fr": "Joindre une personne",
+  "text_en": "Customer service is available Monday to Friday, 9:00 to 17:00 Eastern Time, by email or phone. Questions that this assistant cannot answer are handed to a staff member.",
+  "text_fr": "Le service à la clientèle est joignable du lundi au vendredi, de 9 h à 17 h, heure de l'Est, par courriel ou par téléphone. Les questions auxquelles cet assistant ne peut pas répondre sont transmises à un membre du personnel.",
+  "source": "Boréal Marché prototype policy (project-written, not a real retailer's policy)"
+ }
+]

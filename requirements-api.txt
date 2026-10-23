@@ -1,0 +1,15 @@
+# Runtime dependencies of the API image. Model-critical packages are pinned EXACTLY to the
+# versions recorded in models/head_a_retention_model.metadata.json (a different scikit-learn
+# can silently change predictions). Web-stack packages use a compatible range; after the
+# first successful local build run `pip freeze` inside the container and commit the result
+# as requirements-api.lock to freeze them too.
+scikit-learn==1.8.0
+pandas==3.0.2
+numpy==2.4.4
+joblib==1.5.3
+scipy>=1.15,<2
+pydantic>=2.9,<3
+pydantic-settings>=2.5,<3
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+psycopg[binary]>=3.2,<4
