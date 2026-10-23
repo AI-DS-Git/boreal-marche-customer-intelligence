@@ -26,7 +26,7 @@ _STOP = {
     "and", "or", "for", "in", "on", "it", "we", "your", "does", "if", "will", "be", "about", "with",
     "le", "la", "les", "un", "une", "des", "de", "du", "est", "sont", "je", "mon", "ma", "mes",
     "puis", "peut", "comment", "que", "quoi", "et", "ou", "pour", "dans", "sur", "il", "nous",
-    "votre", "vos", "si", "au", "aux", "en", "quel", "quelle", "quels", "quelles", "y", "a",
+    "votre", "vos", "si", "au", "aux", "en", "quel", "quelle", "quels", "quelles", "y",
     "combien", "coute", "cout", "tell", "please", "svp", "bonjour", "hello", "hi", "joke", "long", "much",
 }
 _FR_HINTS = {
@@ -40,8 +40,8 @@ _DOMAIN = {
     "policy", "order", "price", "product", "recommend", "suggest", "retention", "churn", "customer",
     "staff", "contact", "service", "offer", "tracking", "delete", "deletion", "exchange", "discount",
     "retour", "remboursement", "livraison", "expedition", "fidelite", "confidentialite", "donnees",
-    "politique", "commande", "prix", "produit", "recommande", "suggere", "retention", "client",
-    "personnel", "contact", "service", "offre", "suivi", "suppression", "echange", "rabais",
+    "politique", "commande", "prix", "produit", "recommande", "suggere", "client",
+    "personnel", "offre", "suivi", "suppression", "echange", "rabais",
 }
 
 OTHER_CUSTOMER = re.compile(
