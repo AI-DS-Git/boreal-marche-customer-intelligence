@@ -65,8 +65,10 @@ def prepare(df: pd.DataFrame):
     return X, y
 
 
-def split(X: pd.DataFrame, y: pd.Series):
-    order = X.sort_values("last_purchase_date_days").index
+def split(X: pd.DataFrame, y: pd.Series, ids: pd.Series):
+    # Deterministic order: ~34 customers tie on the last-purchase day at the 85% cut, and the default
+    # (unstable) sort lets row order decide who lands in the held-out slice. Tie-break by customer ID.
+    order = X.assign(_id=ids).sort_values(["last_purchase_date_days", "_id"], kind="stable").index
     n = len(order)
     a, b = int(n * 0.70), int(n * 0.85)
     tr, ca, te = order[:a], order[a:b], order[b:]
@@ -110,7 +112,7 @@ def main() -> None:
 
     df = pd.read_csv(DATA)
     X, y = prepare(df)
-    (Xtr, ytr), (Xca, yca), (Xte, yte) = split(X, y)
+    (Xtr, ytr), (Xca, yca), (Xte, yte) = split(X, y, df[ID])
     cand, categorical, numeric = build_candidate(Xtr, ytr, Xca, yca)
     cand_s = scores(cand, Xte, yte)
 
