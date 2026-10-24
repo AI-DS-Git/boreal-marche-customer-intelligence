@@ -56,12 +56,20 @@ echo "infrastructure policy: $INFRA_POLICY"
 aws iam attach-role-policy --role-name ecsInfrastructureRoleForExpressServices --policy-arn "$INFRA_POLICY"
 
 # Role GitHub Actions assumes. Only workflows running on the main branch of this repository can use it.
+# IMPORTANT: GitHub's OIDC subject now embeds the permanent numeric IDs of the owner and repository:
+#   repo:<owner>@<ownerId>/<repo>@<repoId>:ref:refs/heads/main
+# A name-only subject (repo:<owner>/<repo>:...) is rejected with "Not authorized to perform
+# sts:AssumeRoleWithWebIdentity". Read the real value from CloudTrail after one failed attempt:
+#   aws cloudtrail lookup-events --region ca-central-1 \
+#     --lookup-attributes AttributeKey=EventName,AttributeValue=AssumeRoleWithWebIdentity \
+#     --max-results 3 --query 'Events[].CloudTrailEvent' --output text      (field: userIdentity.userName)
+SUB='repo:AI-DS-Git@328886367/boreal-marche-customer-intelligence@1369052498:ref:refs/heads/main'
 cat > trust-github.json <<JSON
 {"Version":"2012-10-17","Statement":[{"Effect":"Allow",
  "Principal":{"Federated":"arn:aws:iam::${ACCOUNT}:oidc-provider/token.actions.githubusercontent.com"},
  "Action":"sts:AssumeRoleWithWebIdentity",
  "Condition":{"StringEquals":{"token.actions.githubusercontent.com:aud":"sts.amazonaws.com",
-   "token.actions.githubusercontent.com:sub":"repo:${REPO}:ref:refs/heads/main"}}}]}
+   "token.actions.githubusercontent.com:sub":"${SUB}"}}}]}
 JSON
 aws iam create-role --role-name boreal-github-deploy --assume-role-policy-document file://trust-github.json || true
 
@@ -90,6 +98,9 @@ GitHub → Actions → **Deploy** → Run workflow (branch `main`). The first ru
 creates the two ECS Express services (first creation takes several minutes), then runs the smoke test, which
 fails the run unless the API reports exactly the deployed commit SHA. The run summary lists the API and UI URLs.
 After that, every push to `main` that passes CI deploys automatically.
+
+## 2b. What happened on the first run (for the deployment note)
+The first run failed at "Configure AWS credentials" because the trust policy used the name-only subject. CloudTrail showed the ID-based subject GitHub actually sends; after correcting the trust policy the re-run deployed both services (10m 38s) and the smoke test confirmed the live API reported the deployed commit SHA.
 
 ## 3. Known limits of this deployment
 - **The prediction log is a local SQLite file inside the single API task**, so the monitoring history resets
