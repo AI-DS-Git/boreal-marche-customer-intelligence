@@ -4,7 +4,7 @@ Talks to the FastAPI service only (API_URL); it holds no model or data of its ow
 """
 import json
 import os
-import time
+from datetime import date, timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -70,6 +70,22 @@ def call(method, path, **kw):
         return 0, None
 
 
+def stream_chat(message, language, provider):
+    """Yields the server-sent events of POST /chat/stream as they arrive (true token streaming)."""
+    try:
+        with requests.post(API + "/chat/stream", json={"message": message, "language": language,
+                                                       "provider": provider},
+                           stream=True, timeout=(5, 120)) as r:
+            if r.status_code != 200:
+                yield {"type": "error", "detail": r.text[:300]}
+                return
+            for line in r.iter_lines(chunk_size=None, decode_unicode=True):
+                if line and line.startswith("data: "):
+                    yield json.loads(line[6:])
+    except requests.RequestException as exc:
+        yield {"type": "error", "detail": type(exc).__name__}
+
+
 def need_api():
     code, _ = call("GET", "/health")
     if code != 200:
@@ -87,7 +103,14 @@ if idx == 0:
     f["recency_days"] = c1.slider(t["recency"], 0, 700, int(EXAMPLE["recency_days"]))
     f["frequency_orders"] = c2.slider(t["orders"], 1, 60, int(EXAMPLE["frequency_orders"]))
     f["monetary_total"] = float(c3.slider(t["spend"], 0, 20000, int(EXAMPLE["monetary_total"]), step=50))
-    # Keep the derived fields consistent with what the user edited.
+    # Keep dates and derived fields consistent with what the user edited: recency is measured
+    # from a fixed snapshot date, so moving it moves the last-purchase date and the lifetime.
+    first = date.fromisoformat(EXAMPLE["first_purchase_date"])
+    snapshot = date.fromisoformat(EXAMPLE["last_purchase_date"]) + timedelta(days=int(EXAMPLE["recency_days"]))
+    last = max(first, snapshot - timedelta(days=f["recency_days"]))
+    f["last_purchase_date"] = last.isoformat()
+    offset = int(EXAMPLE["customer_lifetime_days"]) - (date.fromisoformat(EXAMPLE["last_purchase_date"]) - first).days
+    f["customer_lifetime_days"] = max(0, (last - first).days + offset)
     f["monetary_mean_order"] = f["revenue_per_order"] = round(f["monetary_total"] / f["frequency_orders"], 2)
     f["transaction_count"] = max(f["transaction_count"], f["frequency_orders"])
     code, res = call("POST", "/predict", json={"features": f})
@@ -141,21 +164,27 @@ elif idx == 2:
         st.session_state.chat.append({"role": "user", "text": q})
         with st.chat_message("user"):
             st.write(q)
-        code, res = call("POST", "/chat", json={"message": q, "language": lang, "provider": provider})
         with st.chat_message("assistant"):
-            if code == 200:
-                box, shown = st.empty(), ""
-                for word in res["answer"].split(" "):  # rendered progressively; true token streaming arrives with the LLM providers
-                    shown += word + " "
+            box, shown, final = st.empty(), "", None
+            for ev in stream_chat(q, lang, provider):
+                if ev["type"] == "token":
+                    shown += ev["text"]
+                    box.write(shown + " \u258c")
+                elif ev["type"] == "replace":  # a guardrail or the answer verifier overrode the model
+                    shown = ev["text"]
                     box.write(shown)
-                    time.sleep(0.015)
-                if res["citations"]:
-                    st.caption(t["sources"] + ": " + "; ".join(f"{c['title']} ({c['score']:.2f})" for c in res["citations"]))
-                if res["tool_calls"]:
-                    st.caption(t["tools"] + ": " + ", ".join(x["tool"] for x in res["tool_calls"]))
-                st.session_state.chat.append({"role": "assistant", "text": res["answer"], "cites": res["citations"], "tools": res["tool_calls"]})
-            else:
-                st.error(json.dumps(res))
+                elif ev["type"] == "final":
+                    final = ev
+                elif ev["type"] == "error":
+                    st.error(ev["detail"])
+            if final:
+                box.write(final["answer"])
+                if final["citations"]:
+                    st.caption(t["sources"] + ": " + "; ".join(f"{c['title']} ({c['score']:.2f})" for c in final["citations"]))
+                if final["tool_calls"]:
+                    st.caption(t["tools"] + ": " + ", ".join(x["tool"] for x in final["tool_calls"]))
+                st.session_state.chat.append({"role": "assistant", "text": final["answer"],
+                                              "cites": final["citations"], "tools": final["tool_calls"]})
 
 # ---- 4. Monitoring --------------------------------------------------------------------
 elif idx == 3:

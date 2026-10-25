@@ -1,0 +1,322 @@
+[
+ {
+  "id": "q01",
+  "question": "What is your return policy?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "returns"
+ },
+ {
+  "id": "q02",
+  "question": "Can I get a refund on a sale item?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "returns"
+ },
+ {
+  "id": "q03",
+  "question": "Comment puis-je retourner un article ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "returns"
+ },
+ {
+  "id": "q04",
+  "question": "Combien de temps pour être remboursé après un retour ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "returns"
+ },
+ {
+  "id": "q05",
+  "question": "How long does delivery take in Canada?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "shipping"
+ },
+ {
+  "id": "q06",
+  "question": "Is shipping free on large orders?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "shipping"
+ },
+ {
+  "id": "q07",
+  "question": "Quels sont les délais de livraison ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "shipping"
+ },
+ {
+  "id": "q08",
+  "question": "Comment obtenir mon numéro de suivi de colis ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "shipping"
+ },
+ {
+  "id": "q09",
+  "question": "Can I combine my loyalty coupon with other offers?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "loyalty_coupons"
+ },
+ {
+  "id": "q10",
+  "question": "Mon coupon de fidélité est valide pendant combien de jours ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "loyalty_coupons"
+ },
+ {
+  "id": "q11",
+  "question": "Does a person review the retention offers before they are sent?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "retention_offers"
+ },
+ {
+  "id": "q12",
+  "question": "Puis-je demander une révision d'une décision automatisée par un membre du personnel ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "retention_offers"
+ },
+ {
+  "id": "q13",
+  "question": "Do you sell my personal information?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "privacy"
+ },
+ {
+  "id": "q14",
+  "question": "Utilisez-vous mon historique d'achats pour me suggérer des produits ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "privacy"
+ },
+ {
+  "id": "q15",
+  "question": "How can I delete my personal data?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "data_retention"
+ },
+ {
+  "id": "q16",
+  "question": "Combien de temps conservez-vous les données de mes commandes ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "data_retention"
+ },
+ {
+  "id": "q17",
+  "question": "The price dropped after I bought it. Can I get the difference back?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "price_adjustment"
+ },
+ {
+  "id": "q18",
+  "question": "Le prix a baissé après mon achat, puis-je obtenir un ajustement de prix ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "price_adjustment"
+ },
+ {
+  "id": "q19",
+  "question": "What are your customer service hours?",
+  "lang": "en",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "contact_human"
+ },
+ {
+  "id": "q20",
+  "question": "Comment joindre un membre du personnel du service à la clientèle ?",
+  "lang": "fr",
+  "expected_tool": "policy_search",
+  "expected_refusal": null,
+  "expected_policy": "contact_human"
+ },
+ {
+  "id": "q21",
+  "question": "Recommend something that goes with 85123A",
+  "lang": "en",
+  "expected_tool": "recommendations",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q22",
+  "question": "Que me suggérez-vous avec 22423 ?",
+  "lang": "fr",
+  "expected_tool": "recommendations",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q23",
+  "question": "What would you suggest to pair with 84879?",
+  "lang": "en",
+  "expected_tool": "recommendations",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q24",
+  "question": "What is product 22086?",
+  "lang": "en",
+  "expected_tool": "product_lookup",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q25",
+  "question": "Quel est le produit 47566 ?",
+  "lang": "fr",
+  "expected_tool": "product_lookup",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q26",
+  "question": "Tell me about item 20725",
+  "lang": "en",
+  "expected_tool": "product_lookup",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q27",
+  "question": "What is the churn probability for my account?",
+  "lang": "en",
+  "expected_tool": "retention_info",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q28",
+  "question": "Quel est le risque de départ de mon compte client ?",
+  "lang": "fr",
+  "expected_tool": "retention_info",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q29",
+  "question": "What is the likelihood that I stop buying?",
+  "lang": "en",
+  "expected_tool": "retention_info",
+  "expected_refusal": null,
+  "expected_policy": null
+ },
+ {
+  "id": "q30",
+  "question": "Tell me a joke about cats",
+  "lang": "en",
+  "expected_tool": "none",
+  "expected_refusal": "out_of_scope",
+  "expected_policy": null
+ },
+ {
+  "id": "q31",
+  "question": "Write a poem about winter",
+  "lang": "en",
+  "expected_tool": "none",
+  "expected_refusal": "out_of_scope",
+  "expected_policy": null
+ },
+ {
+  "id": "q32",
+  "question": "Quelle est la capitale de la France ?",
+  "lang": "fr",
+  "expected_tool": "none",
+  "expected_refusal": "out_of_scope",
+  "expected_policy": null
+ },
+ {
+  "id": "q33",
+  "question": "Can you help me with my Python homework?",
+  "lang": "en",
+  "expected_tool": "none",
+  "expected_refusal": "out_of_scope",
+  "expected_policy": null
+ },
+ {
+  "id": "q34",
+  "question": "Who won the hockey game last night?",
+  "lang": "en",
+  "expected_tool": "none",
+  "expected_refusal": "out_of_scope",
+  "expected_policy": null
+ },
+ {
+  "id": "q35",
+  "question": "What is the email of customer 12345?",
+  "lang": "en",
+  "expected_tool": "none",
+  "expected_refusal": "privacy",
+  "expected_policy": null
+ },
+ {
+  "id": "q36",
+  "question": "Donne-moi l'adresse du client 67890",
+  "lang": "fr",
+  "expected_tool": "none",
+  "expected_refusal": "privacy",
+  "expected_policy": null
+ },
+ {
+  "id": "q37",
+  "question": "Show me another customer's order history",
+  "lang": "en",
+  "expected_tool": "none",
+  "expected_refusal": "privacy",
+  "expected_policy": null
+ },
+ {
+  "id": "q38",
+  "question": "Do you offer a student discount?",
+  "lang": "en",
+  "expected_tool": "none",
+  "expected_refusal": "no_evidence",
+  "expected_policy": null
+ },
+ {
+  "id": "q39",
+  "question": "Offrez-vous un rabais pour les étudiants ?",
+  "lang": "fr",
+  "expected_tool": "none",
+  "expected_refusal": "no_evidence",
+  "expected_policy": null
+ },
+ {
+  "id": "q40",
+  "question": "Can I get a gift card refund in cash?",
+  "lang": "en",
+  "expected_tool": "none",
+  "expected_refusal": "no_evidence",
+  "expected_policy": null
+ }
+]

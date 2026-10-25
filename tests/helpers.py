@@ -6,6 +6,7 @@ from pathlib import Path
 from app.config import get_settings
 from app.schemas import CustomerFeatures
 from app.services.assistant import AssistantService, PolicyIndex, RuleBaselineProvider
+from app.services.retrieval import EmbeddingIndex, HashingEmbedder
 from app.services.model_service import ModelService
 from app.services.rules_service import RulesService
 
@@ -37,3 +38,12 @@ def assistant() -> AssistantService:
     s = get_settings()
     prov = RuleBaselineProvider(PolicyIndex(s.policies_path), rules().recommend, rules().describe, s.retrieval_floor)
     return AssistantService({"rule": prov})
+
+
+@lru_cache(maxsize=1)
+def assistant_hashing() -> AssistantService:
+    """Same rule provider, retrieval through the offline hashing embedder (the deployed default)."""
+    s = get_settings()
+    idx = EmbeddingIndex(s.policies_path, HashingEmbedder())
+    return AssistantService({"rule": RuleBaselineProvider(idx, rules().recommend, rules().describe,
+                                                          s.floor_for("hashing"))})

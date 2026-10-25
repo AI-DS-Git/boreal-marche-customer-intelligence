@@ -17,7 +17,7 @@ import unicodedata
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Iterator, List, Optional
 
 PRODUCT_CODE = re.compile(r"\b(\d{5}[A-Za-z]{0,2})\b")
 
@@ -51,6 +51,9 @@ OTHER_CUSTOMER = re.compile(
     re.IGNORECASE,
 )
 
+RETENTION_WORDS = {"churn", "risque", "risk", "probabilite", "probability", "likelihood", "score"}
+RECO_STEMS = ("recommend", "sugg", "goes", "pair", "match")  # sugg: suggest, suggere, suggerez...
+
 MESSAGES = {
     "out_of_scope": {
         "en": "I can only help with Boréal Marché policies, products, recommendations and retention questions.",
@@ -68,9 +71,13 @@ MESSAGES = {
         "en": "I can't compute a retention probability in chat. Use the Prediction page: it calls the retention model with the customer's features, and a staff member reviews any offer.",
         "fr": "Je ne peux pas calculer de probabilité de rétention dans le clavardage. Utilisez la page Prédiction : elle appelle le modèle avec les caractéristiques du client, et un membre du personnel révise toute offre.",
     },
+    "provider_unavailable": {
+        "en": "That assistant provider is not reachable right now; please try the rule provider.",
+        "fr": "Ce fournisseur d'assistant est inaccessible pour le moment; veuillez essayer le fournisseur par règles.",
+    },
     "not_implemented": {
-        "en": "That provider is not available yet in this build; use the rule provider.",
-        "fr": "Ce fournisseur n'est pas encore disponible dans cette version; utilisez le fournisseur par règles.",
+        "en": "That provider is not configured on this server; use the rule provider.",
+        "fr": "Ce fournisseur n'est pas configuré sur ce serveur; utilisez le fournisseur par règles.",
     },
 }
 
@@ -111,6 +118,21 @@ def detect_language(text: str) -> str:
     return "fr" if len(words & _FR_HINTS) >= 2 else "en"
 
 
+def pre_guard(message: str, lang: str, provider: str) -> Optional["ChatResult"]:
+    """Deterministic guardrails that run BEFORE any model sees the message (privacy first,
+    then out-of-scope). Used by every LLM-backed provider."""
+    norm = strip_accents(message.lower())
+    if OTHER_CUSTOMER.search(norm):
+        reason = "privacy"
+    elif (not PRODUCT_CODE.search(message) and not _in_domain(message)
+          and not (set(tokens(message)) & RETENTION_WORDS)):
+        reason = "out_of_scope"
+    else:
+        return None
+    return ChatResult(answer=MESSAGES[reason][lang], language=lang, provider=provider,
+                      refused=True, refusal_reason=reason)
+
+
 @dataclass
 class ChatResult:
     answer: str
@@ -127,6 +149,18 @@ class Provider(ABC):
 
     @abstractmethod
     def answer(self, message: str, language: str) -> ChatResult: ...
+
+    def stream(self, message: str, language: str) -> Iterator[Dict[str, Any]]:
+        """Events: {"type": "tool", ...trace}, {"type": "token", "text"}, {"type": "replace", "text"},
+        then exactly one {"type": "final", "result": ChatResult}. The rule provider has the whole
+        answer up front, so its tokens are word-chunked; LLM providers override this with the
+        model's own token stream."""
+        r = self.answer(message, language)
+        for t in r.tool_calls:
+            yield {"type": "tool", **t}
+        for w in r.answer.split(" "):
+            yield {"type": "token", "text": w + " "}
+        yield {"type": "final", "result": r}
 
 
 class PolicyIndex:
@@ -200,9 +234,9 @@ class RuleBaselineProvider(Provider):
 
         codes = PRODUCT_CODE.findall(message)
         words = set(tokens(message))
-        wants_reco = bool(words & {"recommend", "suggest", "recommande", "suggere", "goes", "pair", "match"})
+        wants_reco = any(w.startswith(RECO_STEMS) for w in words)
         wants_product = bool(words & {"product", "produit", "price", "prix", "item", "article"})
-        wants_retention = bool(words & {"churn", "risque", "risk", "probabilite", "probability", "likelihood", "score"})
+        wants_retention = bool(words & RETENTION_WORDS)
 
         # Tool 3: recommendations (the codes come from the Head B engine, never from text).
         if codes and wants_reco:
@@ -238,7 +272,9 @@ class RuleBaselineProvider(Provider):
 
         # Tool 2: retention score needs customer features; the chat never invents a number.
         if wants_retention:
-            return ChatResult(answer=MESSAGES["retention_tool"][lang], language=lang, provider=self.name)
+            return ChatResult(answer=MESSAGES["retention_tool"][lang], language=lang, provider=self.name,
+                              tool_calls=[{"tool": "retention_info", "arguments": {},
+                                           "result_summary": "redirected to the Prediction page (no probability in chat)"}])
 
         # Guardrail 2: out of scope (no domain vocabulary at all).
         if not _in_domain(message):
@@ -270,3 +306,14 @@ class AssistantService:
             return ChatResult(answer=MESSAGES["not_implemented"][lang], language=lang, provider=provider,
                               refused=True, refusal_reason="not_implemented")
         return prov.answer(message, lang)
+
+    def stream(self, message: str, language: str = "auto", provider: str = "rule") -> Iterator[Dict[str, Any]]:
+        lang = detect_language(message) if language == "auto" else language
+        prov = self.providers.get(provider)
+        if prov is None:
+            r = ChatResult(answer=MESSAGES["not_implemented"][lang], language=lang, provider=provider,
+                           refused=True, refusal_reason="not_implemented")
+            yield {"type": "token", "text": r.answer}
+            yield {"type": "final", "result": r}
+            return
+        yield from prov.stream(message, lang)
