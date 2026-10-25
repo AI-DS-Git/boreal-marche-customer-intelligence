@@ -55,3 +55,25 @@ def test_monitoring_summary_and_metrics(client):
     assert s["overall_status"] in ("green", "amber", "red", "insufficient_data")
     assert "first_true_accuracy_signal_on" in s["ground_truth"]
     assert "boreal_requests_total" in client.get("/metrics").text
+
+
+def sse_events(text):
+    import json as _json
+    return [_json.loads(line[6:]) for line in text.splitlines() if line.startswith("data: ")]
+
+
+def test_chat_stream_emits_tokens_then_one_final_event(client):
+    r = client.post("/chat/stream", json={"message": "What is your return policy?", "provider": "rule"})
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/event-stream")
+    ev = sse_events(r.text)
+    assert [e["type"] for e in ev].count("final") == 1 and ev[-1]["type"] == "final"
+    assert any(e["type"] == "token" for e in ev)
+    final = ev[-1]
+    assert final["citations"][0]["source_id"] == "returns" and not final["refused"]
+    assert "".join(e["text"] for e in ev if e["type"] == "token").strip() == final["answer"].strip()
+
+
+def test_chat_stream_unconfigured_provider_is_reported(client):
+    r = client.post("/chat/stream", json={"message": "hello", "provider": "openai"})
+    final = sse_events(r.text)[-1]
+    assert final["refused"] and final["refusal_reason"] == "not_implemented"

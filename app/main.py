@@ -9,11 +9,12 @@ import logging
 import time
 import uuid
 from contextlib import asynccontextmanager
+from dataclasses import asdict
 
 import sklearn
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, StreamingResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
@@ -24,7 +25,7 @@ from app.schemas import (
     HealthResponse, PredictRequest, PredictResponse, ReadyResponse, RecommendRequest,
     RecommendResponse, ToolCall, VersionResponse,
 )
-from app.services.assistant import AssistantService, PolicyIndex, RuleBaselineProvider
+from app.services.assistant_factory import build_assistant
 from app.services.model_service import ModelService
 from app.services.rules_service import RulesService
 
@@ -46,10 +47,7 @@ async def lifespan(app: FastAPI):
     if app.state.model.version_warning:
         jlog(event="model_version_warning", detail=app.state.model.version_warning)
     app.state.rules = RulesService(s.rules_path, s.popularity_path, s.products_path)
-    policies = PolicyIndex(s.policies_path)
-    rule_provider = RuleBaselineProvider(policies, app.state.rules.recommend, app.state.rules.describe,
-                                         s.retrieval_floor)
-    app.state.assistant = AssistantService({"rule": rule_provider})
+    app.state.assistant = build_assistant(s, app.state.rules)
     app.state.store = LogStore(s.database_url)
     reference = None
     if s.drift_reference_path.exists():
@@ -198,6 +196,28 @@ def chat(body: ChatRequest, request: Request):
         request_id=request.state.request_id, answer=r.answer, language=r.language, provider=r.provider,
         citations=[Citation(**c) for c in r.citations], tool_calls=[ToolCall(**t) for t in r.tool_calls],
         refused=r.refused, refusal_reason=r.refusal_reason, latency_ms=round((time.perf_counter() - t0) * 1000, 2))
+
+
+@app.post("/chat/stream")
+def chat_stream(body: ChatRequest, request: Request):
+    """Server-sent events: tool / token / replace events as they happen, then one final event
+    carrying the same fields as /chat. 'replace' tells the client to discard the text streamed so
+    far (a guardrail or the answer verifier overrode the model)."""
+    t0 = time.perf_counter()
+    rid = request.state.request_id
+    request.state.meta = {"provider": body.provider, "stream": True}
+    svc = request.app.state.assistant
+
+    def events():
+        for ev in svc.stream(body.message, body.language, body.provider):
+            if ev["type"] == "final":
+                r = asdict(ev["result"])
+                ev = {"type": "final", "request_id": rid, **r,
+                      "latency_ms": round((time.perf_counter() - t0) * 1000, 2)}
+            yield "data: " + json.dumps(ev, ensure_ascii=False) + "\n\n"
+
+    return StreamingResponse(events(), media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
 # ---- monitoring -----------------------------------------------------------------------

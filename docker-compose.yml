@@ -1,6 +1,8 @@
 # One command brings up the whole system:   docker compose up --build
 # API http://localhost:8000/docs   UI http://localhost:8501
-# Optional local LLM (Head C, later):       docker compose --profile llm up --build
+# Optional local LLM for the assistant:     docker compose --profile llm up --build
+#   then:  docker compose exec ollama ollama pull llama3.1:8b && docker compose exec ollama ollama pull bge-m3
+#   and set in .env:  OLLAMA_BASE_URL=http://ollama:11434  EMBEDDING_PROVIDER=ollama
 services:
   db:
     image: postgres:16-alpine
@@ -24,7 +26,9 @@ services:
       DATABASE_URL: postgresql://boreal:${POSTGRES_PASSWORD:-boreal_dev_only}@db:5432/boreal
       ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OLLAMA_URL: http://ollama:11434
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-hashing}
+      EMBEDDING_FLOOR: ${EMBEDDING_FLOOR:-}
     depends_on:
       db: { condition: service_healthy }
     ports: ["8000:8000"]
