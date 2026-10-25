@@ -166,7 +166,7 @@ elif idx == 2:
             st.write(q)
         with st.chat_message("assistant"):
             box, shown, final = st.empty(), "", None
-            for ev in stream_chat(q, lang, provider):
+            for ev in stream_chat(q, "auto", provider):  # answer in the language the user typed, not the UI language
                 if ev["type"] == "token":
                     shown += ev["text"]
                     box.write(shown + " \u258c")
