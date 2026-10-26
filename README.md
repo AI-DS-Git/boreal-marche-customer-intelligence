@@ -13,7 +13,7 @@
 | **Live UI** (bilingual) | https://bo-18e314a8dc3544148369c0305041cb8f.ecs.ca-central-1.on.aws |
 | **Live API docs** | https://bo-ef5fe6766e224e0c8c335d5b98addb0c.ecs.ca-central-1.on.aws/docs |
 | **Check what is running** | `GET /version` returns the git SHA, model version and threshold |
-| **Reports** | D3 validation report (repo root), D4 deployment note and D5 optimization and ethics report (`docs/`) |
+| **Reports** | `reports/`: D5 optimization and ethics report, final technical report, bilingual executive summary, presentation deck, reflection; D3 validation report (repo root) |
 
 *Status of the live links: hosted on AWS ECS Fargate; they stay up during grading and are deleted afterwards to stop billing.*
 
@@ -97,13 +97,27 @@ Simulate traffic for the monitoring page: `python scripts/simulate_traffic.py --
 | `docs/`, `reports/` | evidence, figures, fairness, interpretability and performance outputs |
 | [`MODEL_CARD.md`](MODEL_CARD.md), [`DATA_CARD.md`](DATA_CARD.md), [`GOVERNANCE_LOI25.md`](GOVERNANCE_LOI25.md), [`ARCHITECTURE.md`](ARCHITECTURE.md) | cards, Law 25 register and disclosure, architecture |
 
+### Layout note: where the course's required paths live
+The course specification lists a target layout; this repository grew with different names. Same contents, different places:
+
+| Specified path | Here |
+|---|---|
+| `src/` | `src/` (training, features, rules) and `app/` (the serving API) |
+| `docker/` | `Dockerfile`, `Dockerfile.ui`, `docker-compose.yml` at the repository root |
+| `frontend/` | `ui/` (Streamlit) |
+| `artifacts/` (model, metadata, rules, index) | `models/` (joblib model, metadata sidecar, drift reference); rules in `docs/head_b_rules.json` and `docs/head_b_popularity.json`; the retrieval index is built at start-up from `app/data/policies.json` |
+| `docs/corpus/` | `app/data/policies.json` and `app/data/products.json` |
+| `.github/workflows/` `ci.yml`, `cd.yml`, `retrain.yml` | `ci.yml`, `deploy.yml` (the delivery workflow), `retrain.yml` |
+| `data/` (DVC-tracked) | `data/`; the raw dataset is never committed. DVC was planned in D2 and not adopted: the workbook's SHA-256 is recorded in the D2 report |
+| `notebooks/` | not used: the work is in `src/` scripts, with the narrative in the reports |
+
 ## Honest limits
 - **Data:** a public UK retailer dataset (UCI Online Retail II, 2009–2011), not real Boréal Marché data; one retailer, 91% UK.
 - **Fairness:** low-spend, mid-spend and new customers are never scored above about 0.52, so all of them fall below the 0.82 cut-off. Every offer is reviewed by a person for this reason. Recalibration and reweighting did not fix it; the likely fix is better features.
 - **Monitoring:** true accuracy cannot be measured until labels arrive 90 days later (first signal about 24 January 2027). The deployed log is container-local SQLite and resets on redeploy.
 - **Assistant:** the deployed service runs the rule provider; no LLM key is configured. Policy texts are prototype placeholders.
-- **Not run:** the SageMaker HPO comparison is written but was not executed; hyperparameters come from local tuning.
-- **Cost assumptions** for the profit model ($5 / 20% / 30%) are planning assumptions, not client financials.
+- **Not run:** the SageMaker HPO comparison is written but was not executed (hyperparameters come from local tuning); no concurrent load test; no real-LLM assistant evaluation.
+- **Cost assumptions** for the profit model ($5 / 20% / 30%) are planning assumptions, not client financials; varying all three together, the targeted policy loses to the blanket coupon in 5 of 27 scenarios (`scripts/profit_sensitivity.py`).
 
 ## What I would do next
 1. Run the clean-machine test (a classmate follows this README) and fix whatever breaks.
