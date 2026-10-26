@@ -141,7 +141,7 @@ class ModelService:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             p = self._raw_model().predict_proba(df[self.feature_order])[:, 1]
-        out = []
+        out: List[Dict[str, Any]] = []
         for i, name in enumerate(names, start=1):
             effect = float(p[0] - p[i])
             if abs(effect) < 1e-4:

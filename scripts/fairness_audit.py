@@ -24,7 +24,7 @@ from sklearn.isotonic import IsotonicRegression
 from sklearn.metrics import average_precision_score, roc_auc_score
 
 sys.path.insert(0, str(Path(__file__).parent))
-from retrain import DATA, CURRENT_ART, ID, PARAMS, THRESHOLD, build_candidate, prepare, split  # noqa: E402
+from retrain import DATA, CURRENT_ART, ID, PARAMS, THRESHOLD, prepare, split  # noqa: E402
 
 OUT = Path("reports/fairness")
 RNG = np.random.default_rng(42)
