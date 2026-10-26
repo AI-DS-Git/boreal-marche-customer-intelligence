@@ -65,6 +65,26 @@ class PredictResponse(Strict):
     latency_ms: float
 
 
+class ExplainRequest(Strict):
+    features: CustomerFeatures
+    k: int = Field(default=3, ge=1, le=10)
+
+
+class Factor(Strict):
+    group: str  # a set of related predictors, occluded together
+    detail: str
+    effect: float  # change in retention probability caused by this value vs a typical customer
+    direction: Literal["raises_retention", "lowers_retention"]
+
+
+class ExplainResponse(Strict):
+    request_id: str
+    retain_probability: float
+    factors: List[Factor]
+    method: str
+    caveat: str
+
+
 class BatchPredictRequest(Strict):
     items: List[CustomerFeatures] = Field(min_length=1, max_length=1000)
 

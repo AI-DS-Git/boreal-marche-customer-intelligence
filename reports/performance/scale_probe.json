@@ -1,0 +1,20 @@
+{
+  "summary_vs_rows": [
+    {
+      "rows_logged": 1000,
+      "summary_ms": 154.1,
+      "rows_used_for_drift": 1000
+    },
+    {
+      "rows_logged": 5000,
+      "summary_ms": 1064.2,
+      "rows_used_for_drift": 5000
+    },
+    {
+      "rows_logged": 20000,
+      "summary_ms": 1039.6,
+      "rows_used_for_drift": 5000
+    }
+  ],
+  "sqlite_write_rows_per_s": 385
+}

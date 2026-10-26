@@ -7,9 +7,11 @@
 
 **Performance (held-out test).** PR-AUC 0.875 · ROC-AUC 0.730. Decision rule: offer if P(retain) < 0.82, chosen to maximise expected profit (about $1,066 vs $201 for a blanket coupon on the test set, under stated cost assumptions).
 
-**Limits.** Moderate ranking power (ROC-AUC 0.73). Trained on one retailer's 2009–2011 history, so behaviour may have shifted. A fairness audit of low-spend customers is still to be completed. Not for automated, customer-facing decisions.
+**Limits.** Moderate ranking power (ROC-AUC 0.73). Trained on one retailer's 2009–2011 history, so behaviour may have shifted. A subgroup audit found that low-spend, mid-spend and new customers are never scored above about 0.52, so all of them fall below the 0.82 cut-off; this is why every offer is reviewed by a person. Not for automated, customer-facing decisions.
 
 ## Privacy notice
+We use your purchase history to estimate whether you may stop buying and to suggest products. This is done by an automated tool. A staff member reviews every retention offer before it is sent, and the tool never makes a decision about you on its own. You may ask us which information was used and the main reasons for a result, to correct that information, and to have a person review any decision that concerns you. To exercise your rights, contact our privacy officer.
+
 This prototype is built on a public, de-identified retail dataset. It does not collect personal information from visitors. Requests you send are logged (feature values, prediction, timing, request id) to monitor model quality; no names, emails or addresses are stored. The assistant refuses to share or look up another person's data. Under Quebec's Law 25, customers must be told when an automated tool informs a decision about them and may ask for a human review; a production deployment would add consent capture, retention limits and a named privacy officer.
 
 ## Data provenance

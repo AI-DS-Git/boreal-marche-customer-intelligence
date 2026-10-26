@@ -24,7 +24,7 @@ def golden_features() -> CustomerFeatures:
 @lru_cache(maxsize=1)
 def model() -> ModelService:
     s = get_settings()
-    return ModelService(s.model_path, s.model_metadata_path)
+    return ModelService(s.model_path, s.model_metadata_path, reference_path=s.drift_reference_path)
 
 
 @lru_cache(maxsize=1)

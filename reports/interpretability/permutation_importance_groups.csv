@@ -1,0 +1,9 @@
+group,members,pr_auc_drop,sd
+order frequency,frequency_orders transaction_count active_days active_months orders_per_active_month avg_days_between_orders,0.04443573423528938,0.008367203984868588
+spend and volume,monetary_total monetary_mean_order revenue_per_order total_quantity average_quantity quantity_per_order,0.007942131480634666,0.005404509792440492
+tenure,first_purchase_date_days customer_lifetime_days,0.0045681730624307585,0.004033153875052228
+seasonality and weekends,holiday_transactions holiday_season_ratio weekend_transactions weekend_transaction_ratio,0.004406655553953091,0.0049179965991072395
+basket variety,unique_products unique_product_descriptions products_per_order avg_lines_per_order,0.000770975378630978,0.001616541672741411
+country,country is_uk,3.8513529298400686e-06,0.00010246951782735453
+recency,recency_days last_purchase_date_days,0.0,0.0
+price level,average_unit_price price_std,-0.0005761747961702702,0.0011208013286530788

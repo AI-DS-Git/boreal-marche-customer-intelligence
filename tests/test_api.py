@@ -35,6 +35,17 @@ def test_predict_golden_customer(client):
     assert r.headers["x-request-id"] == b["request_id"]
 
 
+def test_explain_returns_ranked_factors(client):
+    g = golden()
+    r = client.post("/explain", json={"features": g["features"], "k": 3})
+    assert r.status_code == 200
+    b = r.json()
+    assert abs(b["retain_probability"] - g["expected_retain_probability"]) < 1e-5
+    effects = [abs(f["effect"]) for f in b["factors"]]
+    assert 1 <= len(b["factors"]) <= 3 and effects == sorted(effects, reverse=True)
+    assert all(f["direction"] in ("raises_retention", "lowers_retention") for f in b["factors"])
+
+
 def test_predict_rejects_bad_input_with_uniform_error(client):
     f = dict(golden()["features"], surprise=1)
     r = client.post("/predict", json={"features": f})

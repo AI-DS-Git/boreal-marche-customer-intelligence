@@ -23,6 +23,7 @@ T = {
         "retain": "Probability the customer is retained", "risk": "Churn risk", "decision": "Recommended action",
         "target": "Send a retention offer (a staff member reviews it)", "none": "No action needed",
         "threshold": "Decision threshold", "model": "Model version",
+        "why_h": "Main factors behind this score (for staff, not a customer-facing reason)", "why_up": "raises retention", "why_dn": "lowers retention",
         "reco_h": "Basket and recommendations", "add": "Add product code", "add_btn": "Add", "clear": "Clear basket",
         "basket": "Basket", "empty": "The basket is empty; showing the most popular items.", "because": "because you added",
         "chat_h": "Assistant", "provider": "Provider", "ask": "Ask about policies, products or recommendations",
@@ -41,6 +42,7 @@ T = {
         "retain": "Probabilité que le client soit retenu", "risk": "Risque de départ", "decision": "Action recommandée",
         "target": "Envoyer une offre de rétention (révisée par un membre du personnel)", "none": "Aucune action requise",
         "threshold": "Seuil de décision", "model": "Version du modèle",
+        "why_h": "Principaux facteurs de ce score (pour le personnel, pas une raison à donner au client)", "why_up": "augmente la rétention", "why_dn": "diminue la rétention",
         "reco_h": "Panier et recommandations", "add": "Ajouter un code produit", "add_btn": "Ajouter", "clear": "Vider le panier",
         "basket": "Panier", "empty": "Le panier est vide; affichage des articles les plus populaires.", "because": "parce que vous avez ajouté",
         "chat_h": "Assistant", "provider": "Fournisseur", "ask": "Posez une question sur les politiques, les produits ou les recommandations",
@@ -121,6 +123,12 @@ if idx == 0:
         c.metric(t["threshold"], f"{res['threshold']:.2f}")
         (st.warning if res["decision"] == "target_with_offer" else st.success)(f"**{t['decision']}:** {t['target'] if res['decision']=='target_with_offer' else t['none']}")
         st.caption(f"{t['model']}: {res['model_version']} · request {res['request_id']}")
+        ecode, ex = call("POST", "/explain", json={"features": f, "k": 3})
+        if ecode == 200 and ex["factors"]:
+            st.markdown(f"**{t['why_h']}**")
+            for fa in ex["factors"]:
+                up = fa["direction"] == "raises_retention"
+                st.write(f"{'▲' if up else '▼'} **{fa['group']}** ({fa['detail']}) → {t['why_up'] if up else t['why_dn']} ({fa['effect'] * 100:+.1f} pts)")
     else:
         st.error(json.dumps(res))
 

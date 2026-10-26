@@ -13,6 +13,19 @@ def test_golden_prediction_regression():
     assert model().decide(p) == g["expected_decision"]
 
 
+def test_explain_is_ranked_graded_and_does_not_change_the_prediction():
+    m = model()
+    f = golden_features()
+    before = float(m.predict_proba([f])[0])
+    top = m.explain(f, k=4)
+    assert 1 <= len(top) <= 4
+    sizes = [abs(x["effect"]) for x in top]
+    assert sizes == sorted(sizes, reverse=True)
+    assert len({x["effect"] for x in top}) > 1  # graded scores, not a calibration step that ties everything
+    assert {x["group"] for x in top} <= set(m.GROUPS)
+    assert float(m.predict_proba([f])[0]) == before  # explaining must not mutate the model or the input
+
+
 def test_decision_rule_boundary():
     m = model()
     assert m.threshold == 0.82

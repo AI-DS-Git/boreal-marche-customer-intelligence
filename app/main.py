@@ -22,7 +22,7 @@ from app.db import LogStore
 from app.monitoring import MonitoringService
 from app.schemas import (
     BatchPredictRequest, BatchPredictResponse, ChatRequest, ChatResponse, Citation,
-    HealthResponse, PredictRequest, PredictResponse, ReadyResponse, RecommendRequest,
+    ExplainRequest, ExplainResponse, HealthResponse, PredictRequest, PredictResponse, ReadyResponse, RecommendRequest,
     RecommendResponse, ToolCall, VersionResponse,
 )
 from app.services.assistant_factory import build_assistant
@@ -43,18 +43,20 @@ async def lifespan(app: FastAPI):
     app.state.settings = s
     # Loaded once at start-up, not per request. A missing/corrupt artifact fails the
     # container here (and /ready never turns green) instead of failing user requests.
-    app.state.model = ModelService(s.model_path, s.model_metadata_path, s.strict_library_versions)
+    app.state.model = ModelService(s.model_path, s.model_metadata_path, s.strict_library_versions,
+                                       reference_path=s.drift_reference_path)
     if app.state.model.version_warning:
         jlog(event="model_version_warning", detail=app.state.model.version_warning)
     app.state.rules = RulesService(s.rules_path, s.popularity_path, s.products_path)
     app.state.assistant = build_assistant(s, app.state.rules)
     app.state.store = LogStore(s.database_url)
+    purged = app.state.store.purge_older_than(s.log_retention_days)  # retention policy, applied at every start-up
     reference = None
     if s.drift_reference_path.exists():
         reference = json.loads(s.drift_reference_path.read_text(encoding="utf-8"))
     app.state.monitor = MonitoringService(app.state.store, reference, s)
     app.state.metrics = {"requests": 0, "errors": 0}
-    jlog(event="startup", git_sha=s.git_sha, model_version=app.state.model.model_version)
+    jlog(event="startup", git_sha=s.git_sha, model_version=app.state.model.model_version, purged=purged)
     yield
 
 
@@ -157,6 +159,19 @@ def predict(body: PredictRequest, request: Request):
     st.store.log_prediction(resp.request_id, "/predict", st.model.model_version, st.settings.git_sha,
                             json.loads(body.features.model_dump_json()), p, resp.decision, ms)
     return resp
+
+
+@app.post("/explain", response_model=ExplainResponse)
+def explain(body: ExplainRequest, request: Request):
+    """Top factors behind one prediction (occlusion vs a typical customer). Staff-facing: it is not logged as a
+    prediction (so it does not feed drift statistics) and it is not a customer-ready 'reason'."""
+    st = request.app.state
+    p = float(st.model.predict_proba([body.features])[0])
+    return ExplainResponse(
+        request_id=request.state.request_id, retain_probability=round(p, 6),
+        factors=st.model.explain(body.features, body.k),
+        method="group occlusion: each set of related predictors replaced by typical-customer values, one group at a time",
+        caveat="Effects are in points of the uncalibrated model score. They describe how the model reacts, not why the customer behaves this way.")
 
 
 @app.post("/predict/batch", response_model=BatchPredictResponse)
