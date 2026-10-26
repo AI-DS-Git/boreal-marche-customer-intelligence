@@ -226,6 +226,8 @@ def monitoring_summary(request: Request, hours: float = 24):
     mon = request.app.state.monitor
     summary = mon.summary(hours)
     summary["new_alerts"] = mon.raise_alerts(summary)
+    if summary["new_alerts"]:  # show an alert raised by THIS request in the same response
+        summary["alerts"] = mon.store.recent_alerts(10)
     return summary
 
 
