@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     error_rate_alert: float = 0.05
     p95_latency_ms_alert: float = 500.0
     min_requests_for_drift: int = 30
+    log_retention_days: int = 120  # 90-day label delay + 30 days; see GOVERNANCE_LOI25.md (retention and deletion)
 
     # Optional alert sink (e.g. a Slack/Discord/Teams incoming webhook URL).
     alert_webhook_url: Optional[str] = None

@@ -1,0 +1,13 @@
+case,ms,n,p50,p95,p99,mean
+"imports (joblib, sklearn, app)",771.0,,,,,
+model load at start-up (once),178.5,,,,,
+first prediction after load (cold),31.4,,,,,
+"warm single prediction (n_jobs=1, as served)",,60.0,48.4,51.09,51.46,41.76
+load model on EVERY request (rejected design),,10.0,165.32,280.72,280.72,173.31
+"warm single prediction (n_jobs=-1, as saved)",,60.0,117.7,145.12,149.21,118.15
+"batch 100 (n_jobs=-1), total ms",,10.0,120.0,140.03,140.03,120.21
+"batch 1000 (n_jobs=-1), total ms",,10.0,166.45,180.47,180.47,166.92
+"batch 100 (n_jobs=1), total ms",,10.0,39.96,46.08,46.08,38.91
+"batch 1000 (n_jobs=1), total ms",,10.0,64.69,66.39,66.39,64.35
+"/explain work (group occlusion, 1 batched call)",,60.0,41.55,54.15,55.36,44.41
+explain done naively (one call per group),,10.0,264.58,303.39,303.39,263.73

@@ -1,0 +1,9 @@
+case,n,p50,p95,p99,mean,error
+GET /health,60.0,52.26,72.06,81.0,54.35,
+GET /ready,60.0,57.95,68.83,80.06,57.35,
+GET /version,60.0,65.54,94.33,111.31,67.06,
+POST /predict,60.0,265.34,307.52,332.12,257.37,
+POST /explain,,,,,,HTTP Error 404: Not Found
+POST /predict/batch (100),60.0,972.91,1795.12,1871.11,1082.55,
+POST /recommend,60.0,67.9,85.98,87.94,68.16,
+POST /chat (rule provider),60.0,65.38,78.45,85.48,64.6,

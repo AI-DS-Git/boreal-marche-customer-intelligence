@@ -52,3 +52,19 @@ def test_delayed_ground_truth_is_explicit():
     store.record_outcome("r0", 1)
     gt = MonitoringService(store, None, get_settings()).summary()["ground_truth"]
     assert gt["accuracy"]["n_labelled"] == 1
+
+
+def test_retention_purge_deletes_old_prediction_rows_only():
+    from datetime import datetime, timedelta, timezone
+
+    from app.db import LogStore
+
+    store = LogStore("sqlite:///:memory:")
+    store.log_prediction("new", "/predict", "v", "sha", {"a": 1}, 0.5, "no_action", 1.0)
+    store.log_prediction("old", "/predict", "v", "sha", {"a": 1}, 0.5, "no_action", 1.0)
+    old = (datetime.now(timezone.utc) - timedelta(days=200)).isoformat(timespec="seconds")
+    store._exec("UPDATE predictions SET ts = ? WHERE request_id = ?", (old, "old"))
+    counts = store.purge_older_than(120)
+    assert counts["predictions"] == 1
+    left = store._all("SELECT request_id FROM predictions")
+    assert [r["request_id"] for r in left] == ["new"]

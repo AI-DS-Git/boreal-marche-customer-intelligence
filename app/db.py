@@ -130,6 +130,18 @@ class LogStore:
         self._exec("INSERT INTO outcomes (request_id, observed_retained, observed_at) VALUES (?,?,?)",
                    (request_id, int(observed_retained), utcnow()))
 
+    def purge_older_than(self, days: float) -> Dict[str, int]:
+        """Retention policy (Law 25 s.23: destroy when the purpose is achieved). Prediction rows hold customer
+        feature values, so they are deleted after `days` (default 120 = 90-day label delay + 30 days grace);
+        request metadata follows the same limit. Labels carry no features and are kept for accuracy history."""
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat(timespec="seconds")
+        counts = {}
+        for table in ("predictions", "requests"):
+            n = self._all(f"SELECT COUNT(*) AS n FROM {table} WHERE ts < ?", (cutoff,))[0]["n"]
+            self._exec(f"DELETE FROM {table} WHERE ts < ?", (cutoff,))
+            counts[table] = int(n)
+        return counts
+
     # -- reads ---------------------------------------------------------------
     @staticmethod
     def _since(hours: float) -> str:

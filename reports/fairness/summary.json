@@ -1,0 +1,19 @@
+{
+  "threshold": 0.82,
+  "held_out_n": 788,
+  "overall": {
+    "group_type": "ALL",
+    "group": "all",
+    "n": 788,
+    "retained_rate": 0.7601522842639594,
+    "selection_rate": 0.4593908629441624,
+    "recall": 0.5475792988313857,
+    "precision": 0.9060773480662984,
+    "recall_lo": NaN,
+    "recall_hi": NaN,
+    "recall_gap_pp": NaN,
+    "flagged": NaN,
+    "small": NaN
+  },
+  "flag_rule_pp": 5.0
+}
