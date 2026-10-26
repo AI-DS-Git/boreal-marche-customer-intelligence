@@ -47,7 +47,7 @@ More detail and the reasoning behind each decision: [ARCHITECTURE.md](ARCHITECTU
 | **Extra Trees, tuned + calibrated (shipped)** | **0.875 (held-out)** · 0.819 (CV) | **0.730** (held-out) · 0.707 (CV) | |
 | Random Forest (not shipped) | 0.879 (held-out) | 0.728 | slightly higher PR-AUC on held-out; Extra Trees won the cross-validated spot check and was chosen before the held-out look |
 
-Decision rule: offer review if P(retain) < **0.82**, chosen on expected profit. Under the stated planning assumptions ($5 coupon, 20% margin, 30% recovery; not verified client financials), expected profit on the held-out slice is **$1,065.65 vs $201.36** for a blanket coupon.
+Decision rule: offer review if P(retain) < **0.82**, chosen on expected profit. Under the stated planning assumptions ($5 coupon, 20% margin, 30% recovery; not verified client financials), expected profit on the held-out slice is **$1,067 vs $235** per campaign for a blanket coupon (recomputed on the final split by `scripts/profit_sensitivity.py`; the D3 report showed $1,065.65 vs $201.36 on its own split).
 
 **Head B – recommendations** (temporal hold-out, hit-rate@5): rule engine **0.404** vs popularity baseline 0.312 (1.30x); catalogue coverage 3.1% vs 0.3%.
 

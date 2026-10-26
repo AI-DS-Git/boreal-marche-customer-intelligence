@@ -37,7 +37,7 @@ date: 3,674 train, 787 calibration, 788 held-out (`data/processed`, see `DATA_CA
 | PR-AUC (primary) | 0.8753 (metadata); 0.8726 recomputed by `scripts/fairness_audit.py` on the same split |
 | ROC-AUC | 0.7301 (metadata); 0.7260 recomputed |
 | Recall of retained / precision at 0.82 | 0.548 / 0.906 |
-| Expected profit (D3 assumptions: $5 coupon, 20% margin, 30% recovery) | $1,065.65 vs $201.36 for a blanket coupon |
+| Expected profit (D3 assumptions: $5 coupon, 20% margin, 30% recovery) | $1,067 vs $235 for a blanket coupon (final split; D3 showed $1,065.65 vs $201.36 on its own split) |
 
 The held-out slice is the most recent period and is richer and older than the training slice (retention 76% vs 31%).
 Real-world accuracy cannot be measured until labels mature 90 days after each prediction (first signal about 2027-01-24).
