@@ -6,7 +6,7 @@
 
 **One system that tells a retailer which customers are about to stop buying, what to recommend in a basket, and answers customer questions in English and French, deployed, monitored and governed under Quebec's Law 25.**
 
-> **Demo video (60–90 s):** `ADD LINK HERE` &nbsp;·&nbsp; Full walkthrough (about 5 min): attached to the [v0.9 release](https://github.com/AI-DS-Git/boreal-marche-customer-intelligence/releases/tag/v0.9)
+> **Demo video (60–90 s):** [Watch on YouTube](https://youtu.be/kokds-XL3zg) &nbsp;·&nbsp; Full walkthrough (about 5 min): attached to the [v0.9 release](https://github.com/AI-DS-Git/boreal-marche-customer-intelligence/releases/tag/v0.9)
 
 | | |
 |---|---|
